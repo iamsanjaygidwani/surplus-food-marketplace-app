@@ -212,6 +212,7 @@ exports.default = strapi_1.factories.createCoreService('api::cart.cart', ({ stra
                     order_items: orderItems,
                     order_cancelled_items: [],
                     order_status: 'created',
+                    payment_status: 'pending',
                     order_value: cart.total,
                     publishedAt: new Date()
                 }

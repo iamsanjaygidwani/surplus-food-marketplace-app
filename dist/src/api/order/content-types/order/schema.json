@@ -53,6 +53,16 @@
             "required": true,
             "default": "created"
         },
+        "payment_status": {
+            "type": "enumeration",
+            "enum": [
+                "pending",
+                "successful",
+                "failed"
+            ],
+            "required": true,
+            "default": "pending"
+        },
         "cancellation_reason": {
             "type": "enumeration",
             "enum": [

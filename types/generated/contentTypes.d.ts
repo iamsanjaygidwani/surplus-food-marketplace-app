@@ -34,6 +34,10 @@ export interface AdminApiToken extends Struct.CollectionTypeSchema {
         minLength: 1;
       }> &
       Schema.Attribute.DefaultTo<''>;
+    encryptedKey: Schema.Attribute.Text &
+      Schema.Attribute.SetMinMaxLength<{
+        minLength: 1;
+      }>;
     expiresAt: Schema.Attribute.DateTime;
     lastUsedAt: Schema.Attribute.DateTime;
     lifespan: Schema.Attribute.BigInteger;
@@ -412,6 +416,37 @@ export interface ApiCartCart extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiMealCategoryMealCategory
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'meal_categories';
+  info: {
+    displayName: 'Meal Category';
+    pluralName: 'meal-categories';
+    singularName: 'meal-category';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Blocks;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::meal-category.meal-category'
+    > &
+      Schema.Attribute.Private;
+    meals: Schema.Attribute.Relation<'oneToMany', 'api::meal.meal'>;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiMealMeal extends Struct.CollectionTypeSchema {
   collectionName: 'meals';
   info: {
@@ -446,6 +481,10 @@ export interface ApiMealMeal extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::meal.meal'> &
       Schema.Attribute.Private;
+    meal_category: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::meal-category.meal-category'
+    >;
     name: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetMinMaxLength<{
@@ -523,6 +562,11 @@ export interface ApiOrderOrder extends Struct.CollectionTypeSchema {
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'created'>;
     order_value: Schema.Attribute.Decimal;
+    payment_status: Schema.Attribute.Enumeration<
+      ['pending', 'successful', 'failed']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'pending'>;
     publishedAt: Schema.Attribute.DateTime;
     store: Schema.Attribute.Relation<'oneToOne', 'api::store.store'>;
     updatedAt: Schema.Attribute.DateTime;
@@ -1198,6 +1242,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::cart.cart': ApiCartCart;
+      'api::meal-category.meal-category': ApiMealCategoryMealCategory;
       'api::meal.meal': ApiMealMeal;
       'api::order.order': ApiOrderOrder;
       'api::stock-event.stock-event': ApiStockEventStockEvent;

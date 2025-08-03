@@ -8,13 +8,16 @@ import cron from 'node-cron';
 export default factories.createCoreService('api::meal.meal', ({ strapi }) => ({
     async createRecurringStockEvents() {
         try {
-            // Find all meals with recurring_stock
+            // find all meals with recurring stock which are available to purchase & store is enabled
             const meals = await strapi.db.query('api::meal.meal').findMany({
                 where: {
-                    recurring_stock: {
-                        $gt: 0
-                    }
-                }
+                    recurring_stock: { $gt: 0 },
+                    available_to_purchase: true,
+                    store: {
+                        enabled: true,
+                    },
+                },
+                populate: ['store'],
             });
 
             // Create stock events for each meal
@@ -26,12 +29,14 @@ export default factories.createCoreService('api::meal.meal', ({ strapi }) => ({
                         type: 'INCREMENT',
                         event_source: 'store',
                         event_time: new Date(),
-                        publishedAt: new Date()
-                    }
+                        publishedAt: new Date(),
+                    },
                 });
             }
+
+            strapi.log.info(`Created stock events for ${meals.length} meals`);
         } catch (error) {
-            console.error('Error creating recurring stock events:', error);
+            strapi.log.error('Error creating recurring stock events:', error);
         }
     },
 

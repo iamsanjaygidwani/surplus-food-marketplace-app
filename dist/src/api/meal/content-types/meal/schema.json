@@ -14,9 +14,9 @@
     "attributes": {
         "name": {
             "type": "string",
-            "required": true,
+            "minLength": 4,
             "maxLength": 100,
-            "minLength": 4
+            "required": true
         },
         "description": {
             "type": "blocks"
@@ -34,14 +34,14 @@
         },
         "price": {
             "type": "decimal",
-            "min": 0.1,
-            "required": true
+            "required": true,
+            "min": 0.1
         },
         "discount_percentage": {
             "type": "decimal",
             "required": true,
-            "max": 100,
-            "min": 0
+            "min": 0,
+            "max": 100
         },
         "store": {
             "type": "relation",
@@ -51,13 +51,18 @@
         },
         "available_to_purchase": {
             "type": "boolean",
-            "default": true,
-            "required": false
+            "required": false,
+            "default": true
         },
         "recurring_stock": {
             "type": "integer",
-            "min": 0,
-            "default": 0
+            "default": 0,
+            "min": 0
+        },
+        "meal_category": {
+            "type": "relation",
+            "relation": "oneToOne",
+            "target": "api::meal-category.meal-category"
         }
     }
 }
